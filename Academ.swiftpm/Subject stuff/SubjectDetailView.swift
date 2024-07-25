@@ -22,7 +22,12 @@ struct SubjectDetailView: View {
                         Text("No. of Assessments")
                         TextField("Num",value:$sub.numOfAssessments, formatter: NumberFormatter())
                     }
-                    if sub.assessmentArray(type: 1).count>1{
+                    HStack{
+                        Text("Overall Goal:")
+                        TextField("Percentage",value:$sub.targetMark,formatter: NumberFormatter())
+                        Text("%")
+                    }//overall goal
+                    if sub.assessmentArray(type: 1).count>0{
                         NavigationLink{
                             SubjectOverallView(subje: $sub,userData: userData)
                         }label: {
@@ -57,42 +62,7 @@ struct SubjectDetailView: View {
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 Section(header: Text("Subject trends (%)")){
-                    if sub.assessmentArray(type: 1).count <= 1 {
-                        Text("Track two or more scores to see your grades over time!")
-                            .foregroundColor(.gray)
-                    } else {
-                        Text("\(sub.name)")
-                            .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                        Chart(sub.assessments, id: \.self) { assessment in
-                            if assessment.examDone{
-                                LineMark(x: .value("Assessment", assessment.name), y: .value("Mark", percentage(amount: assessment.markAttained, total: assessment.totalMarks)))
-                                    .foregroundStyle(.red)
-                                LineMark(x: .value("Assessment", assessment.name), y: .value("Mark", sub.targetMark),series: .value("blank", "smth"))
-                                    .foregroundStyle(.green)
-                                LineMark(x: .value("Assessment", assessment.name), y: .value("Mark", sub.currentOverall()),series: .value("blank", "ded"))
-                                    .foregroundStyle(Color(hex:"0096FF"))
-                            }
-                        }
-                        .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                        .chartYScale(domain:0...100)
-                    }
-                    if sub.assessmentArray(type: 1).count > 1{
-                        HStack{
-                            Image(systemName: "circle.fill")
-                                .foregroundColor(.red)
-                            Text("Marks per WA")
-                            Text("        ")
-                            Image(systemName: "circle.fill")
-                                .foregroundColor(.green)
-                            Text("Goal marks")
-                            Text("  ")
-                            Image(systemName: "circle.fill")
-                                .foregroundColor(Color(hex:"0096FF"))
-                            Text("Overall marks")
-                        }
-                        .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                    }
-                    
+                    GraphView(sub: sub, userData: userData)
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
             }

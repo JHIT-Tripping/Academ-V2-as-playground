@@ -34,11 +34,7 @@ struct SubjectOverallView: View {
                             Text("\(String(format:"%.2f",subje.highest()))%")
                         }
                     }//highest
-                    HStack{
-                        Text("Overall Goal:")
-                        TextField("Percentage",value:$subje.targetMark,formatter: NumberFormatter())
-                        Text("%")
-                    }//overall goal
+                    
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 Section("Goals"){
