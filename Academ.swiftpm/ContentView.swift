@@ -9,22 +9,22 @@ import SwiftUI
 //to clean file errors just do command + shift + k
 
 struct ContentView: View {
-    @State private var selection = 2
+    @State private var selection = 1
     @StateObject private var userData = UserData()
     @Environment(\.colorScheme) var colorScheme
     var body: some View {
         TabView(selection: $selection){
             SubjectsView(userData: userData)
-                .tabItem{
+                .tabItem {
                     Label("Subjects", systemImage: "books.vertical")
                         .ignoresSafeArea(.all)
                 }.tag(1)
-            DashboardView(userData:userData)
-                .tabItem{
-                    Label("Dashboard", systemImage: "gauge.open.with.lines.needle.33percent")
+           // DashboardView(userData:userData)
+           //     .tabItem{
+            //        Label("Dashboard", systemImage: "gauge.open.with.lines.needle.33percent")
                     
-                        .ignoresSafeArea(.all)
-                }.tag(2)
+            //            .ignoresSafeArea(.all)
+           //     }.tag(2)
             SettingsView(userData: userData)
                 .tabItem {
                     Label("Settings", systemImage: "gear")
@@ -62,6 +62,8 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(SubjectManager())
             .environmentObject(SystemManager())
             .colorScheme(.dark)
+            
+            
     }
 }
 

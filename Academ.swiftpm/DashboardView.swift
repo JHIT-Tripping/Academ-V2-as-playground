@@ -53,8 +53,12 @@ struct DashboardView: View {
                     .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 }else{
                     ForEach($subjectmanager.subjects){ $subject in
-                        Section(subject.name + " marks"){
-                            GraphView(sub: subject, userData: userData)
+                        Section{
+                            NavigationLink{
+                                SubjectDetailView(sub:$subject,userData:userData)
+                            }label: {
+                                GraphView(sub: subject, userData: userData)
+                            }
                         }
                         .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                     }

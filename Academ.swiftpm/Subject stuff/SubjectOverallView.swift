@@ -17,7 +17,7 @@ struct SubjectOverallView: View {
     var body: some View {
         NavigationStack{
             Form{
-                Section("Statistics"){
+                Section(header: Text("Statistics").font(.footnote)){
                     HStack{
                         Text("Current Overall:")
                         Text("\(systemmanager.gradeCalculate(mark: subje.currentOverall(), formatt: "%.2f"))")
@@ -37,7 +37,7 @@ struct SubjectOverallView: View {
                     
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                Section("Goals"){
+                Section(header: Text("Goals").font(.footnote)){
                     if subje.assessmentArray(type: 1).count == subje.numOfAssessments{
                         HStack{
                             Text("Goal achieved?")

@@ -18,6 +18,9 @@ struct Assessment: Identifiable, Codable, Hashable{
     var examDate: Date
     var haveReminder: Bool
     var reminder: Date
+    var percentage: Double{
+        return markAttained/totalMarks*100
+    }
 }
 struct Subject: Identifiable, Codable, Equatable{
     var id = UUID()

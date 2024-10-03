@@ -1,5 +1,4 @@
 import SwiftUI
-import Charts
 
 struct ChartAssessment: Identifiable, Hashable {
     var id = UUID()

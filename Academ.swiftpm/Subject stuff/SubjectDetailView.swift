@@ -45,9 +45,21 @@ struct SubjectDetailView: View {
                 Section(header: Text("Assessments")) {
                     List($sub.assessments,editActions:.all){$assessment in
                         NavigationLink(destination: AssessmentDetailView(assess: $assessment,userData: userData)){
-                            Text(assessment.name)
-                            Text("")
-                                .font(.caption)
+                            HStack{
+                                Text(assessment.name)
+                                Spacer()
+                                if assessment.examDone{
+                                    Text(String(format:"%.0f",assessment.percentage)+"%")
+                                }else if assessment.haveReminder{
+                                    Text(assessment.reminder, style: .relative)
+                                    if Date.now>assessment.reminder{
+                                        Text("ago")
+                                    }else{
+                                        Text("from now")
+                                    }
+                                }
+                            }
+                            
                         }
                     }
                     if !(sub.assessments.count >= sub.numOfAssessments){

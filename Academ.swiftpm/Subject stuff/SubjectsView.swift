@@ -17,6 +17,35 @@ struct SubjectsView: View {
             
             Form{
                 Section{
+                    if settings.subjects.count == 0 {
+                        Text("No subjects")
+                            .foregroundColor(.gray)
+                        
+                    }else{
+                        ScrollView(.horizontal){
+                            HStack {
+                                ForEach($settings.subjects){ $subject in
+                                    NavigationLink{
+                                        SubjectDetailView(sub:$subject,userData:userData)
+                                    }label:{
+                                        VStack{
+                                            DonutChartView(subject: subject, userData: userData, width: 6)
+                                                .frame(width: 70, height: 50)
+                                                .padding(4)
+                                            Text(subject.name)
+                                                .foregroundColor(.primary)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                        
+                        .cornerRadius(4)
+                    }
+                }
+                .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
+                Section{
                     
                     if userData.selection==1&&userData.haveCredits{
                         
@@ -69,7 +98,13 @@ struct SubjectsView: View {
                             NavigationLink{
                                 SubjectDetailView(sub:$subject,userData: userData)
                             }label:{
-                                Text(subject.name)
+                                HStack{
+                                    Text(subject.name)
+                                    if !subject.assessments.isEmpty{
+                                        Spacer()
+                                        Text(String(format: "%.0f",subject.currentOverall())+"%")
+                                    }
+                                }
                             }
                             .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                         }
