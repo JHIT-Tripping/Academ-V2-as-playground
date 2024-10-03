@@ -5,9 +5,13 @@ a updated version of my app on Swift Playgrounds, [Academ](https://app.swiftinsg
 - [x] Donut charts linking to Subject details
 - [x] coloured donut charts
 - [x] Standardise Graph View
-- [ ] add more grading systems
 - [ ] more features
+- [ ] fix bugs
+- [ ] remove unnecessary things
 ### V3
 - [ ] PhyoID integration
-- [ ] more languages
-- [ ] SwiftData?
+- [ ] add more grading systems
+- [ ] Sub Assessments
+### Possible
+- [ ] SwiftData
+- [ ] Multicards integration
