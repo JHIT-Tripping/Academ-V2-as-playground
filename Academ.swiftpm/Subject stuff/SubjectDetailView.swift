@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
-import Charts
+
 struct SubjectDetailView: View {
     @Binding var sub: Subject
     @State private var displaySheet = false
     @State private var showAlert = false
     @ObservedObject var userData: UserData
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
     var body: some View {
         
         NavigationStack {
@@ -20,14 +25,14 @@ struct SubjectDetailView: View {
                     TextField("Name",text:$sub.name)
                     HStack{
                         Text("No. of Assessments")
-                        TextField("Num",value:$sub.numOfAssessments, formatter: NumberFormatter())
+                        TextField("Num",value:$sub.numOfAssessments, formatter: formatter)
                     }
                     HStack{
                         Text("Overall Goal:")
-                        TextField("Percentage",value:$sub.targetMark,formatter: NumberFormatter())
+                        TextField("Percentage",value:$sub.targetMark,formatter: formatter)
                         Text("%")
                     }//overall goal
-                    if sub.assessmentArray(type: 1).count>0{
+                    if sub.assessments.map({$0.markAttained}).count>0{
                         NavigationLink{
                             SubjectOverallView(subje: $sub,userData: userData)
                         }label: {
@@ -37,7 +42,7 @@ struct SubjectDetailView: View {
                     if userData.haveCredits{
                         HStack{
                             Text("Credit")
-                            TextField("Hours",value: $sub.credits, formatter: NumberFormatter())
+                            TextField("Hours",value: $sub.credits, formatter: formatter)
                         }
                     }
                 }
@@ -73,17 +78,24 @@ struct SubjectDetailView: View {
                     
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                Section(header: Text("Subject trends (%)")){
-                    GraphView(sub: sub, userData: userData)
+                if sub.assessments.map({$0.markAttained}).count>0{
+                    Section(header: Text("Subject trends (%)")){
+                        GraphView(sub: sub, userData: userData)
+                    }
+                    .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 }
-                .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
             }
-            .background(userData.themelists[userData.colorSelect].mainColor)
-            .scrollContentBackground(userData.themelists[userData.colorSelect].hideBackground ? .hidden : .visible)
+            .background(.linearGradient(colors: userData.themelists[userData.colorSelect].mainColor, startPoint: .top, endPoint: .bottom))
+            .scrollContentBackground(.hidden)
             .navigationTitle($sub.name)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
+                        .padding(.trailing, 8)
+                        .background(userData.themelists[userData.colorSelect].secondColor)
+                        .mask{
+                            RoundedRectangle(cornerRadius: 10)
+                        }
                 }
             }
             .onAppear{

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct SubjectOverallView: View {
     @Binding var subje: Subject
-    @State private var MarkGoal = 0
     @State private var showAlert = false
     @EnvironmentObject var systemmanager: SystemManager
     @ObservedObject var userData: UserData
@@ -20,16 +19,16 @@ struct SubjectOverallView: View {
                 Section(header: Text("Statistics").font(.footnote)){
                     HStack{
                         Text("Current Overall:")
-                        Text("\(systemmanager.gradeCalculate(mark: subje.currentOverall(), formatt: "%.2f"))")
-                        if userData.selection>0{
+                        Text("\(systemmanager.gradeCalculate(mark: subje.currentOverall(), formatt: "%.2f", userData: userData, customSys: subje.customSystem))")
+                        if userData.gradeType != .none{
                             Spacer()
                             Text("\(String(format:"%.2f",subje.currentOverall()))%")
                         }
                     }//current overall
                     HStack{
                         Text("Highest:")
-                        Text("\(systemmanager.gradeCalculate(mark: subje.highest(), formatt: "%.2f"))")
-                        if userData.selection>0{
+                        Text("\(systemmanager.gradeCalculate(mark: subje.highest(), formatt: "%.2f", userData: userData, customSys: subje.customSystem))")
+                        if userData.gradeType != .none{
                             Spacer()
                             Text("\(String(format:"%.2f",subje.highest()))%")
                         }
@@ -38,7 +37,7 @@ struct SubjectOverallView: View {
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 Section(header: Text("Goals").font(.footnote)){
-                    if subje.assessmentArray(type: 1).count == subje.numOfAssessments{
+                    if subje.assessments.map({$0.markAttained}).count == subje.numOfAssessments{
                         HStack{
                             Text("Goal achieved?")
                             if subje.currentOverall() >= subje.targetMark {
@@ -68,8 +67,8 @@ struct SubjectOverallView: View {
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
             }
-            .background(userData.themelists[userData.colorSelect].mainColor)
-            .scrollContentBackground(userData.themelists[userData.colorSelect].hideBackground ? .hidden : .visible)
+            .background(.linearGradient(colors: userData.themelists[userData.colorSelect].mainColor, startPoint: .top, endPoint: .bottom))
+            .scrollContentBackground(.hidden)
             .navigationTitle(subje.name)
             .onAppear{
                 if (subje.assessments.count == subje.numOfAssessments)&&(subje.checkIfSubjectGradeExceeds100()>Double(100)){
@@ -92,9 +91,9 @@ struct SubjectOverallView_Previews: PreviewProvider {
         
         SubjectOverallView(subje: .constant(Subject(name: "Mathematics", assessments: [
             Assessment(name: "WA1", weightage: 10, totalMarks: 20, examDone: true, markAttained: 12, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "WA2", weightage: 15, totalMarks: 30, examDone: true, markAttained: 23, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "WA3", weightage: 15, totalMarks: 45, examDone: true, markAttained: 37, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "EYE", weightage: 60, totalMarks: 120, examDone: false, markAttained: 0, examDate: Date(), haveReminder: true, reminder: Date())
+          //  Assessment(name: "WA2", weightage: 15, totalMarks: 30, examDone: true, markAttained: 23, examDate: Date(), haveReminder: false, reminder: Date()),
+       //     Assessment(name: "WA3", weightage: 15, totalMarks: 45, examDone: true, markAttained: 37, examDate: Date(), haveReminder: false, reminder: Date()),
+     //       Assessment(name: "EYE", weightage: 60, totalMarks: 120, examDone: false, markAttained: 0, examDate: Date(), haveReminder: true, reminder: Date())
         ], targetMark: 80, credits: 0, numOfAssessments: 4)),userData: UserData())
         .environmentObject(SystemManager())
     }

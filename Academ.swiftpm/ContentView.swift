@@ -9,50 +9,47 @@ import SwiftUI
 //to clean file errors just do command + shift + k
 
 struct ContentView: View {
-    @State private var selection = 1
     @StateObject private var userData = UserData()
     @Environment(\.colorScheme) var colorScheme
+    @StateObject private var systemManager = SystemManager()
+    
     var body: some View {
-        TabView(selection: $selection){
+        TabView{
             SubjectsView(userData: userData)
                 .tabItem {
                     Label("Subjects", systemImage: "books.vertical")
                         .ignoresSafeArea(.all)
-                }.tag(1)
-           // DashboardView(userData:userData)
-           //     .tabItem{
+                }
+            // DashboardView(userData:userData)
+            //     .tabItem{
             //        Label("Dashboard", systemImage: "gauge.open.with.lines.needle.33percent")
-                    
+            
             //            .ignoresSafeArea(.all)
-           //     }.tag(2)
+            //     }.tag(2)
             SettingsView(userData: userData)
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                         .ignoresSafeArea(.all)
-                }.tag(3)
+                }
             
         }
-        .onAppear{
-            
+        .onAppear(){
+            //print(colorScheme)
             if colorScheme == .light{
-                if userData.themelists[userData.colorSelect].LightMode == true{
-                    
-                }else {
-                    userData.colorSelect = 4
+                if userData.themelists[userData.colorSelect].LightMode == false{
+                    userData.colorSelect = 7
+                    print(userData.colorSelect)
                 }
                 
-            } else {
-                if userData.themelists[userData.colorSelect].LightMode == false{
-                    
-                } else {
+            } else if colorScheme == .dark{
+                
+                if userData.themelists[userData.colorSelect].LightMode == true{
                     userData.colorSelect = 0
+                    print(userData.colorSelect)
                 }
                 
             }
-            print("main",userData.themelists[userData.colorSelect].mainColor)
-            print("second",userData.themelists[userData.colorSelect].secondColor)
         }
-        
     }
 }
 
@@ -61,9 +58,8 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(SubjectManager())
             .environmentObject(SystemManager())
-            .colorScheme(.dark)
-            
-            
+            .preferredColorScheme(.light)
+        
     }
 }
 

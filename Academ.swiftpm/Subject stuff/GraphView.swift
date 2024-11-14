@@ -6,7 +6,7 @@ struct GraphView: View {
     @ObservedObject var userData: UserData
     var body: some View {
         VStack{
-            if sub.assessmentArray(type: 1).count <= 1 {
+            if sub.assessments.map({$0.markAttained}).count <= 1 {
                 HStack{
                     Spacer()
                     VStack{
@@ -36,7 +36,7 @@ struct GraphView: View {
                 .chartYScale(domain:0...100)
                 
             }
-            if sub.assessmentArray(type: 1).count > 1{
+            if sub.assessments.map({$0.markAttained}).count > 1{
                 HStack{
                     Image(systemName: "circle.fill")
                         .foregroundColor(.red)
