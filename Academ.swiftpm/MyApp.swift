@@ -26,12 +26,12 @@ class AppDelegate: NSObject, UNUserNotificationCenterDelegate, UIApplicationDele
 @main
 struct AcademApp: App {
     
-    
+    @State var systemManager = SystemManager()
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(SubjectManager())
-                .environmentObject(SystemManager())
+                .environment(systemManager)
         }
     }
 }

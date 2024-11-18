@@ -3,7 +3,7 @@ import SwiftUI
 struct NewSystemView: View{
     @State private var newSystem = GradeSystem(name: "", grades: [], type: .none)
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var systemmanager: SystemManager
+    @Environment(SystemManager.self) var systemmanager: SystemManager
     @ObservedObject var userData: UserData
     @State private var showSheet = false
     var body: some View{

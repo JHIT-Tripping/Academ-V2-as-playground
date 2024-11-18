@@ -10,7 +10,7 @@ import SwiftUI
 struct SubjectsView: View {
     @EnvironmentObject var settings: SubjectManager
     @ObservedObject var userData: UserData
-    @EnvironmentObject var systemmanager: SystemManager
+    @Environment(SystemManager.self) var systemmanager: SystemManager
     @State private var displaySheet = false
     var body: some View {
         NavigationStack{
@@ -154,6 +154,6 @@ struct SubjectsView_Previews: PreviewProvider {
     static var previews: some View {
         SubjectsView(userData: UserData())
             .environmentObject(SubjectManager())
-            .environmentObject(SystemManager())
+            .environment(SystemManager())
     }
 }

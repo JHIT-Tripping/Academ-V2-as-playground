@@ -14,9 +14,9 @@ struct SettingsView: View {
     @State private var showAlert = false
     @State private var showSheet = false
     @EnvironmentObject var subjectmanager: SubjectManager
-    @EnvironmentObject var systemmanager: SystemManager
+    @Environment(SystemManager.self) var systemmanager: SystemManager
     var body: some View {
-        
+        @Bindable var systemmanager = systemmanager
         
         NavigationStack{
             
@@ -155,7 +155,7 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView(userData: UserData())
             .environmentObject(SubjectManager())
-            .environmentObject(SystemManager())
+            .environment(SystemManager())
         //.colorScheme(.dark)
     }
 }

@@ -9,7 +9,7 @@ struct DonutChartView: View {
     var subject: Subject
     //    @EnvironmentObject var subjectmanager: SubjectManager
     @ObservedObject var userData: UserData
-    @EnvironmentObject var systemmanager: SystemManager
+    @Environment(SystemManager.self) var systemmanager: SystemManager
     
     var formattedResult: String {
         return subject.currentOverall().isNaN || subject.currentOverall().isSignalingNaN ? "--" : systemmanager.gradeCalculate(mark: Double(subject.currentOverall()), formatt: "%.0f", userData: userData, customSys: subject.customSystem)

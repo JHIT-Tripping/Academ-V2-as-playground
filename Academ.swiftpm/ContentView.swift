@@ -11,9 +11,9 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var userData = UserData()
     @Environment(\.colorScheme) var colorScheme
-    @StateObject private var systemManager = SystemManager()
-    
+    @State var systemManager = SystemManager()
     var body: some View {
+        @Bindable var systemManager = systemManager
         TabView{
             SubjectsView(userData: userData)
                 .tabItem {
@@ -50,16 +50,32 @@ struct ContentView: View {
                 
             }
         }
+        .onChange(of: colorScheme){
+            //print(colorScheme)
+            if colorScheme == .light{
+                if userData.themelists[userData.colorSelect].LightMode == false{
+                    userData.colorSelect = 7
+                    print(userData.colorSelect)
+                }
+                
+            } else if colorScheme == .dark{
+                
+                if userData.themelists[userData.colorSelect].LightMode == true{
+                    userData.colorSelect = 0
+                    print(userData.colorSelect)
+                }
+                
+            }
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(SubjectManager())
-            .environmentObject(SystemManager())
-            .preferredColorScheme(.light)
-        
-    }
+#Preview{
+    ContentView()
+        .environmentObject(SubjectManager())
+        .environment(SystemManager())
+        .preferredColorScheme(.light)
+    
 }
+
 

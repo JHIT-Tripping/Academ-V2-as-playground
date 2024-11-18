@@ -44,6 +44,6 @@ struct GradeDetailView: View {
 
 struct GradeDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        GradeDetailView(grade: .constant(Grade(name: "A", minMark: 80, maxMark:100 , gradePoint: 4.0)),userData: UserData())
+        GradeDetailView(grade: .constant(Grade(name: "A", minMark: 80, maxMark:100 , gradePoint: 4.0)), userData: UserData())
     }
 }

@@ -102,7 +102,7 @@ struct NewSubjectView_Previews: PreviewProvider {
     static var previews: some View {
         NewSubjectView(userData: UserData())
             .environmentObject(SubjectManager())
-            .environmentObject(SystemManager())
+            .environment(SystemManager())
     }
 }
 

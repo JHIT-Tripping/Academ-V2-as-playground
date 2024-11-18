@@ -4,7 +4,6 @@ struct SystemDetailView: View {
     @Binding var system: GradeSystem
     @ObservedObject var userData: UserData
     @State private var showSheet = false
-    @EnvironmentObject var systemmanager: SystemManager
     
     var body: some View {
         //        if let index = systemmanager.systems.firstIndex(where: { $0 == system }) {
@@ -20,7 +19,7 @@ struct SystemDetailView: View {
                 
                 Section("Grades"){
                     
-                    ForEach($system.grades, editActions: .all){$grade in
+                    List($system.grades, editActions: .all){$grade in
                         NavigationLink{
                             GradeDetailView(grade: $grade, userData: userData)
                         }label: {

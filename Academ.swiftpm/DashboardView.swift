@@ -11,7 +11,7 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var subjectmanager: SubjectManager
     @ObservedObject var userData: UserData
-    @EnvironmentObject var systemmanager: SystemManager
+    @Environment(SystemManager.self) var systemmanager: SystemManager
     var body: some View {
         NavigationStack{
             Form {
@@ -80,7 +80,7 @@ struct DashboardView_Previews: PreviewProvider {
     static var previews: some View {
         DashboardView(userData: UserData())
             .environmentObject(SubjectManager())
-            .environmentObject(SystemManager())
+            .environment(SystemManager())
     }
 }
 
