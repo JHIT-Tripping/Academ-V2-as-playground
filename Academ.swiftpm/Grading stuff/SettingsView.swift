@@ -15,6 +15,11 @@ struct SettingsView: View {
     @State private var showSheet = false
     @EnvironmentObject var subjectmanager: SubjectManager
     @Environment(SystemManager.self) var systemmanager: SystemManager
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
     var body: some View {
         @Bindable var systemmanager = systemmanager
         
@@ -42,9 +47,16 @@ struct SettingsView: View {
                         } else {
                             systemmanager.systems = []
                         }
+                        for i in subjectmanager.subjects.indices{
+                            subjectmanager.subjects[i].customSystem = nil
+                        }
                     }
                     Toggle(isOn: $userData.haveCredits) {
                         Text("Have credits?")
+                    }
+                    HStack{
+                        Text("Passing mark:")
+                        TextField("Mark", value: $userData.pass, formatter: formatter)
                     }
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)

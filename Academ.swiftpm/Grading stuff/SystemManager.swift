@@ -5,87 +5,6 @@
 //  Created by T Krobot on 24/11/23.
 //
 
-//import Foundation
-//import SwiftUI
-//
-//class SystemManager: ObservableObject {
-//    @Published var systems: [GradeSystem] = []
-//    {
-//        didSet {
-//            save()
-//        }
-//    }
-//    
-//    init() {
-//        load()
-//    }
-//    func gradeCalculate(mark:Double,formatt:String, userData: UserData, customSys: GradeSystem?)->String{
-//        var resultGrade = ""
-//        if let syst = customSys{
-//            for i in syst.grades{
-//                if mark >= i.minMark && mark <= i.maxMark{
-//                    resultGrade = i.name
-//                    break
-//                }
-//            }
-//        }else if !systems.isEmpty{
-//            for i in systems[0].grades{
-//                if mark >= i.minMark && mark <= i.maxMark{
-//                    resultGrade = i.name
-//                    break
-//                }
-//            }
-//        }else{
-//            resultGrade = "\(String(format:formatt,mark))%"
-//        }
-//        return resultGrade
-//    }
-//    func getNames()->[String]{
-//        var nameArray:[String] = []
-//        for i in systems{
-//            nameArray.append(i.name)
-//        }
-//        return nameArray
-//    }
-//    func gradePointCalculate(mark:Double, userData: UserData)->Double{
-//        var resultGradePoint:Double = 0
-//        if userData.gradeType != .none{
-//            let selectedSystem = systems[0]
-//            for i in selectedSystem.grades{
-//                if mark >= i.minMark{
-//                    resultGradePoint = i.gradePoint
-//                    break
-//                }
-//            }
-//        }else{
-//            resultGradePoint = 0.0
-//        }
-//        return resultGradePoint
-//    }
-//    func getArchiveURL() -> URL {
-//        let plistName = "systems.plist"
-//        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        
-//        return documentsDirectory.appendingPathComponent(plistName)
-//    }
-//    
-//    func save() {
-//        let archiveURL = getArchiveURL()
-//        let propertyListEncoder = PropertyListEncoder()
-//        let encodedGradeSystems = try? propertyListEncoder.encode(systems)
-//        try? encodedGradeSystems?.write(to: archiveURL, options: .noFileProtection)
-//    }
-//    
-//    func load() {
-//        let archiveURL = getArchiveURL()
-//        let propertyListDecoder = PropertyListDecoder()
-//        
-//        if let retrievedGradeSystemData = try? Data(contentsOf: archiveURL),
-//           let systemsDecoded = try? propertyListDecoder.decode([GradeSystem].self, from: retrievedGradeSystemData) {
-//            systems = systemsDecoded
-//        }
-//    }
-//}
 
 import Foundation
 import Observation
@@ -123,29 +42,56 @@ import Observation
         }else{
             resultGrade = "\(String(format:formatt,mark))%"
         }
+        if resultGrade.isEmpty{
+            resultGrade = String(format: "%.2f", mark)
+        }
         return resultGrade
     }
-    func getNames()->[String]{
-        var nameArray:[String] = []
-        for i in systems{
-            nameArray.append(i.name)
-        }
-        return nameArray
-    }
-    func gradePointCalculate(mark:Double, userData: UserData)->Double{
+    func gradePointCalculate(mark:Double, userData: UserData, customSys: GradeSystem?)->Double{
         var resultGradePoint:Double = 0
-        if userData.gradeType != .none{
-            let selectedSystem = systems[0]
-            for i in selectedSystem.grades{
-                if mark >= i.minMark{
+        if let syst = customSys{
+            for i in syst.grades{
+                if mark >= i.minMark && mark <= i.maxMark{
                     resultGradePoint = i.gradePoint
                     break
                 }
             }
-        }else{
-            resultGradePoint = 0.0
+        }else if !systems.isEmpty{
+            for i in systems[0].grades{
+                if mark >= i.minMark && mark <= i.maxMark{
+                    resultGradePoint = i.gradePoint
+                    break
+                }
+            }
         }
         return resultGradePoint
+    }
+    func gradeCalculateFromPoint(point:Double,formatt:String, userData: UserData, customSys: GradeSystem?)->String{
+        var resultGrade = ""
+        if let syst = customSys{
+            if !syst.grades.isEmpty{
+                let ascending = syst.grades.first!.gradePoint < syst.grades.last!.gradePoint
+                for i in syst.grades{
+                    if (ascending && point <= i.gradePoint) || (!ascending && point >= i.gradePoint){
+                        resultGrade = i.name
+                        break
+                    }
+                }
+            }
+        }else if !systems.isEmpty{
+            if !systems[0].grades.isEmpty{
+                let ascending = systems[0].grades.first!.gradePoint < systems[0].grades.last!.gradePoint
+                for i in systems[0].grades{
+                    if (ascending && point <= i.gradePoint) || (!ascending && point >= i.gradePoint){
+                        resultGrade = i.name
+                        break
+                    }
+                }
+            }
+        }else{
+            resultGrade = "\(String(format:formatt,point))%"
+        }
+        return resultGrade
     }
     private func save() {
         let archiveURL = getArchiveURL()

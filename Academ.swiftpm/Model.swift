@@ -139,13 +139,13 @@ struct Subject: Identifiable, Codable, Equatable{
         return unfinishedArray
     }
 }
-struct GradeSystem: Codable, Identifiable, Equatable{
+struct GradeSystem: Codable, Identifiable, Equatable, Hashable{
     var id = UUID()
     var name: String
     var grades: [Grade]
     var type: GradeType
 }
-struct Grade: Codable, Identifiable, Equatable{
+struct Grade: Codable, Identifiable, Equatable, Hashable{
     var id = UUID()
     var name: String
     var minMark: Double
@@ -175,7 +175,14 @@ var defaultSystems = [
         Grade(name: "D7", minMark: 45, maxMark: 49, gradePoint: 7.0),
         Grade(name: "E8", minMark: 40, maxMark: 44, gradePoint: 8.0),
         Grade(name: "F9", minMark: 0, maxMark: 39, gradePoint: 9.0),
-    ], type: .MSG)],// MSG
+    ], type: .MSG),
+     GradeSystem(name: "MAG", grades: [
+        Grade(name: "A", minMark: 70, maxMark: 100, gradePoint: 1.0),
+        Grade(name: "B", minMark: 60, maxMark: 69, gradePoint: 3.0),
+        Grade(name: "C", minMark: 50, maxMark: 59, gradePoint: 5.0),
+        Grade(name: "D", minMark: 45, maxMark: 49, gradePoint: 7.0),
+        Grade(name: "E", minMark: 40, maxMark: 44, gradePoint: 8.0),
+        Grade(name: "F", minMark: 0, maxMark: 39, gradePoint: 9.0)], type: .MSG)],// MSG
     [GradeSystem(name: "AL", grades: [
         Grade(name: "AL1", minMark: 90, maxMark: 100, gradePoint: 1.0),
         Grade(name: "AL2", minMark: 85, maxMark: 89, gradePoint: 2.0),
@@ -191,17 +198,17 @@ var defaultSystems = [
         Grade(name: "AL B", minMark: 30, maxMark: 74, gradePoint: 8.0),
         Grade(name: "AL C", minMark: 0, maxMark: 29, gradePoint: 9.0)
      ], type: .AL)],// AL
-    [GradeSystem(name:"Overall Grade", grades: [
-        Grade(name: "A1", minMark: 75, maxMark: 100, gradePoint: 1.0),
-        Grade(name: "A2", minMark: 70, maxMark: 74, gradePoint: 1.0),
-        Grade(name: "B3", minMark: 65, maxMark: 69, gradePoint: 2.0),
-        Grade(name: "B4", minMark: 60, maxMark: 64, gradePoint: 2.0),
-        Grade(name: "C5", minMark: 55, maxMark: 59, gradePoint: 3.0),
-        Grade(name: "C6", minMark: 50, maxMark: 54, gradePoint: 3.0),
-        Grade(name: "D7", minMark: 45, maxMark: 49, gradePoint: 4.0),
-        Grade(name: "E8", minMark: 40, maxMark: 44, gradePoint: 5.0),
-        Grade(name: "F9", minMark: 0, maxMark: 40, gradePoint: 5.0),
-    ], type: .overallGrade)],// Overall grade (1 is distinction, 2 is merit, 3 is credit, 4 is sub-pass and 5 is fail for grade points)
+//    [GradeSystem(name:"Overall Grade", grades: [
+//        Grade(name: "A1", minMark: 75, maxMark: 100, gradePoint: 1.0),
+//        Grade(name: "A2", minMark: 70, maxMark: 74, gradePoint: 1.0),
+//        Grade(name: "B3", minMark: 65, maxMark: 69, gradePoint: 2.0),
+//        Grade(name: "B4", minMark: 60, maxMark: 64, gradePoint: 2.0),
+//        Grade(name: "C5", minMark: 55, maxMark: 59, gradePoint: 3.0),
+//        Grade(name: "C6", minMark: 50, maxMark: 54, gradePoint: 3.0),
+//        Grade(name: "D7", minMark: 45, maxMark: 49, gradePoint: 4.0),
+//        Grade(name: "E8", minMark: 40, maxMark: 44, gradePoint: 5.0),
+//        Grade(name: "F9", minMark: 0, maxMark: 40, gradePoint: 5.0),
+//    ], type: .overallGrade)],// Overall grade (1 is distinction, 2 is merit, 3 is credit, 4 is sub-pass and 5 is fail for grade points)
     [GradeSystem(name: "N(A)", grades: [
         Grade(name: "1", minMark: 75, maxMark: 100, gradePoint: 1.0),
         Grade(name: "2", minMark: 70, maxMark: 74, gradePoint: 2.0),
@@ -228,25 +235,25 @@ var defaultSystems = [
         Grade(name: "E8", minMark: 40, maxMark: 44, gradePoint: 8.0),
         Grade(name: "F9", minMark: 0, maxMark: 40, gradePoint: 9.0)
     ], type: .OLevel)],// O levels grades (no grade point)
-    [GradeSystem(name: "MAG", grades: [
-        Grade(name: "A", minMark: 70, maxMark: 100, gradePoint: 1.0),
-        Grade(name: "B", minMark: 60, maxMark: 69, gradePoint: 3.0),
-        Grade(name: "C", minMark: 50, maxMark: 59, gradePoint: 5.0),
-        Grade(name: "D", minMark: 45, maxMark: 49, gradePoint: 7.0),
-        Grade(name: "E", minMark: 40, maxMark: 44, gradePoint: 8.0),
-        Grade(name: "F", minMark: 0, maxMark: 39, gradePoint: 9.0),
-    ], type: .MAG)],// MAG
+    [GradeSystem(name: "IB", grades: [
+        Grade(name: "7", minMark: 85, maxMark: 100, gradePoint: 7),
+        Grade(name: "6", minMark: 69, maxMark: 85, gradePoint: 6),
+        Grade(name: "5", minMark: 56, maxMark: 68, gradePoint: 5),
+        Grade(name: "4", minMark: 39, maxMark: 55, gradePoint: 4),
+        Grade(name: "3", minMark: 28, maxMark: 38, gradePoint: 3),
+        Grade(name: "2", minMark: 16, maxMark: 27, gradePoint: 2),
+        Grade(name: "1", minMark: 0, maxMark: 15, gradePoint: 1)
+    ], type: .IB)]
 ]
 enum GradeType: String, CaseIterable, Codable{
     case none = "Default"
     case GPA = "GPA"
     case MSG = "MSG"
     case AL = "AL"
-    case overallGrade = "Overall Grade"
     case NA = "N(A)"
     case NT = "N(T)"
     case OLevel = "O Levels"
-    case MAG = "MAG"
+    case IB = "IB"
 }
 
 func percentage(amount:Double,total:Double)->Double{

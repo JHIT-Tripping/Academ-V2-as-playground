@@ -12,6 +12,7 @@ struct SubjectsView: View {
     @ObservedObject var userData: UserData
     @Environment(SystemManager.self) var systemmanager: SystemManager
     @State private var displaySheet = false
+    @State private var isFormatted = false
     var body: some View {
         NavigationStack{
             
@@ -47,50 +48,46 @@ struct SubjectsView: View {
                     }
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
-                Section{
-                    
-//                    if userData.selection==1&&userData.haveCredits{
-//                        
-//                        HStack{
-//                            Text("Target GPA")
-//                            Text(String(format:"%.2f",settings.compute(isTarget: true,userData:userData)))
-//                        }
-//                        HStack{
-//                            Text("Current GPA")
-//                            Text(String(format:"%.2f",settings.compute(isTarget: false,userData:userData)))
-//                        }
-//                        
-//                    }else if userData.selection==2{
-//                        HStack{
-//                            Text("Target MSG")
-//                            Text(String(format:"%.2f",settings.compute(isTarget: true,userData:userData)))
-//                        }
-//                        HStack{
-//                            Text("Current MSG")
-//                            Text(String(format:"%.2f",settings.compute(isTarget: false,userData:userData)))
-//                        }
-//                    }else if userData.selection==3{
-//                        HStack{
-//                            Text("Target AL")
-//                            Text(String(format:"%.0f",settings.compute(isTarget: true,userData:userData)))
-//                        }
-//                        HStack{
-//                            Text("Current AL")
-//                            Text(String(format:"%.0f",settings.compute(isTarget: false,userData:userData)))
-//                        }
-//                    }else if userData.selection==8{
-//                        HStack{
-//                            Text("Target MAG")
-//                            Text(systemmanager.MSGtoMAG(msg: settings.compute(isTarget: true,userData:userData)))
-//                        }
-//                        HStack{
-//                            Text("Current MAG")
-//                            Text(systemmanager.MSGtoMAG(msg:settings.compute(isTarget: false,userData:userData)))
-//                        }
-//                    }
-                    
+                if !settings.subjects.isEmpty{
+                    Section(content:{
+                        HStack {
+                            Text("Target")
+                            Spacer()
+                            if isFormatted {
+                                Text(systemmanager.gradeCalculateFromPoint(
+                                    point: settings.compute(isTarget: true, userData: userData, systemManager: systemmanager), 
+                                    formatt: "%.2f", 
+                                    userData: userData, customSys: nil
+                                ))
+                            } else {
+                                Text(String(format: "%.2f", settings.compute(isTarget: true, userData: userData, systemManager: systemmanager)))
+                            }
+                        }
+                        HStack {
+                            Text("Current")
+                            Spacer()
+                            if isFormatted {
+                                Text(systemmanager.gradeCalculateFromPoint(
+                                    point: settings.compute(isTarget: false, userData: userData, systemManager: systemmanager), 
+                                    formatt: "%.2f", 
+                                    userData: userData, customSys: nil
+                                ))
+                            } else {
+                                Text(String(format: "%.2f", settings.compute(isTarget: false, userData: userData, systemManager: systemmanager)))
+                            }
+                        }
+                        
+                        
+                    }, footer: {
+                        if userData.gradeType == .GPA || userData.gradeType == .MSG{
+                            Button("Toggle formatting"){
+                                isFormatted.toggle()
+                            }
+                            .font(.footnote)
+                        }
+                    })
+                    .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 }
-                .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 Section{
                     if settings.subjects.count == 0 {
                         Text("No subjects")

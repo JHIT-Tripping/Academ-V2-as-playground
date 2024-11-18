@@ -9,18 +9,7 @@ import Foundation
 import SwiftUI
 
 class SubjectManager: ObservableObject {
-    @Published var subjects: [Subject] = [
-        Subject(name: "Mathematics", assessments: [
-            Assessment(name: "WA1", weightage: 10, totalMarks: 20, examDone: true, markAttained: 12, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "WA2", weightage: 15, totalMarks: 30, examDone: true, markAttained: 23, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "WA3", weightage: 15, totalMarks: 45, examDone: true, markAttained: 37, examDate: Date(), haveReminder: false, reminder: Date()),
-            Assessment(name: "EYE", weightage: 60, totalMarks: 120, examDone: false, markAttained: 93, examDate: Date(), haveReminder: true, reminder: Date())
-        ], targetMark: 80, credits: 0, numOfAssessments: 4),
-        Subject(name: "English", assessments: [Assessment(name: "WA1", weightage: 10, totalMarks: 30, examDone: true, markAttained: 23, examDate: Date(), haveReminder: false, reminder: Date())], targetMark: 75, credits: 0, numOfAssessments: 4),
-        Subject(name: "Science", assessments: [Assessment(name: "WA1", weightage: 10, totalMarks: 10, examDone: true, markAttained: 8, examDate: Date(), haveReminder: false, reminder: Date())], targetMark: 75, credits: 0, numOfAssessments: 4),
-        Subject(name: "History", assessments: [Assessment(name: "WA1", weightage: 10, totalMarks: 20, examDone: true, markAttained: 13, examDate: Date(), haveReminder: false, reminder: Date())], targetMark: 75, credits: 0, numOfAssessments: 4),
-        Subject(name: "Geography", assessments: [Assessment(name: "WA1", weightage: 10, totalMarks: 40, examDone: true, markAttained: 31, examDate: Date(), haveReminder: false, reminder: Date())], targetMark: 75, credits: 0, numOfAssessments: 4),
-    ] {
+    @Published var subjects: [Subject] = [] {
         didSet {
             save()
         }
@@ -30,61 +19,48 @@ class SubjectManager: ObservableObject {
         load()
     }
     
-//    func compute(isTarget:Bool,userData:UserData)->Double{
-//        var creditArray:[Int] = []
-//        var gradePointArray:[Double] = []
-//        var gradeCumulativePointArray:[Double] = []
-//        var gradeCumulativePoint:Double = 0
-//        var credit:Int = 0
-//        var resultComputation = 0.0
-//        if userData.gradeType != nil{
-//            for i in subjects{
-//                if isTarget{
-//                    gradePointArray.append(SystemManager().gradePointCalculate(mark: i.targetMark))
-//                }else{
-//                    gradePointArray.append(SystemManager().gradePointCalculate(mark: i.currentOverall()))
-//                }
-//                if userData.haveCredits{
-//                    creditArray.append(i.credits)
-//                }
-//            }
-//            
-//            if ==1&&userData.haveCredits{
-//                
-//                for i in gradePointArray.indices{
-//                    gradeCumulativePointArray.append(Double(creditArray[i])*gradePointArray[i])
-//                }
-//                for i in gradeCumulativePointArray{
-//                    gradeCumulativePoint+=i
-//                }
-//                for i in creditArray{
-//                    credit+=i
-//                }
-//                resultComputation = gradeCumulativePoint/Double(credit)
-//                
-//            }else if userData.selection==2{
-//                for i in gradePointArray{
-//                    gradeCumulativePoint+=i
-//                }
-//                resultComputation = gradeCumulativePoint/Double(gradePointArray.count)
-//            }else if userData.selection==3{
-//                for i in gradePointArray{
-//                    gradeCumulativePoint+=i
-//                }
-//                resultComputation = gradeCumulativePoint
-//            }else if userData.selection==8{
-//                for i in gradePointArray{
-//                    gradeCumulativePoint+=i
-//                }
-//                resultComputation = gradeCumulativePoint/Double(gradePointArray.count)
-//            }else{
-//                resultComputation = 0.0
-//            }
-//        }else{
-//            resultComputation = 0.0
-//        }
-//        return resultComputation
-//    }
+    func compute(isTarget: Bool, userData: UserData, systemManager: SystemManager) -> Double {
+        var gradePointArray: [Double] = []
+        var creditArray: [Int] = []
+        var weightedGradeSum: Double = 0
+        var totalCredits: Int = 0
+        var resultComputation: Double = 0.0
+        
+        // Iterate over subjects to populate grade points and credits
+        for subject in subjects where subject.isCalculated {
+            if userData.haveCredits {
+                creditArray.append(subject.credits)
+            }
+            
+            let gradePoint = isTarget
+            ? systemManager.gradePointCalculate(mark: subject.targetMark, userData: userData, customSys: subject.customSystem)
+            : systemManager.gradePointCalculate(mark: subject.currentOverall(), userData: userData, customSys: subject.customSystem)
+            
+            gradePointArray.append(userData.gradeType != .none ? gradePoint : (isTarget ? subject.targetMark : subject.currentOverall()))
+        }
+        
+        // Calculate weighted or unweighted grade point average
+        if userData.haveCredits {
+            for (grade, credit) in zip(gradePointArray, creditArray) {
+                weightedGradeSum += grade * Double(credit)
+            }
+            totalCredits = creditArray.reduce(0, +)
+            if userData.gradeType == .GPA || userData.gradeType == .MSG{
+                resultComputation = totalCredits > 0 ? weightedGradeSum / Double(totalCredits) : 0.0
+            }else{
+                resultComputation = weightedGradeSum
+            }
+        } else {
+            weightedGradeSum = gradePointArray.reduce(0, +)
+            if userData.gradeType == .GPA || userData.gradeType == .MSG{
+                resultComputation = gradePointArray.count > 0 ? weightedGradeSum / Double(gradePointArray.count) : 0.0
+            }else{
+                resultComputation = weightedGradeSum
+            }
+        }
+        
+        return resultComputation
+    }
     func getArchiveURL() -> URL {
         let plistName = "subjects.plist"
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!

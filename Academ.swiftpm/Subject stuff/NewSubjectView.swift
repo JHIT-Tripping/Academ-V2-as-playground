@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewSubjectView: View {
     @EnvironmentObject var subjectmanager: SubjectManager
-    @State private var newSubject:Subject = Subject(name: "", assessments: [], targetMark: 0, credits: 0, numOfAssessments: 4)
+    @State private var newSubject:Subject = Subject(name: "", assessments: [], targetMark: 0, credits: 1, numOfAssessments: 4)
     @State private var showNewAssessmentSheet = false
     @Environment(\.dismiss) var dismiss
     @ObservedObject var userData: UserData
@@ -18,6 +18,7 @@ struct NewSubjectView: View {
         formatter.numberStyle = .decimal
         return formatter
     }()
+    @Environment(SystemManager.self) var systemManager: SystemManager
     var body: some View {
         NavigationStack {
             Form{
@@ -36,21 +37,30 @@ struct NewSubjectView: View {
                     if userData.haveCredits{
                         HStack{
                             Text("Credit")
-                            TextField("Hours",value: $newSubject.credits, formatter: formatter)
+                            TextField("Value",value: $newSubject.credits, formatter: formatter)
                         }
                     }
-//                    if userData.selection==3{
-//                        
-//                        //                        Toggle("Foundation Subject?", isOn: $newSubject.isFoundation)
-//                        
-//                        
-//                        //                        Toggle("Higher Mother Tongue?", isOn: $newSubject.isHMT)
-//                        
-//                    }
-//                    if userData.selection==7{
-//                        //                        Toggle("Mother Tongue Syllabus B?", isOn:$newSubject.isMTSB)
-//                        
-//                    }
+                    Toggle("Is calculated?", isOn: $newSubject.isCalculated)
+                    if !systemManager.systems.isEmpty{
+                        Picker("System", selection: $newSubject.customSystem){
+                            ForEach(systemManager.systems){system in
+                                Text(system.name).tag(system as GradeSystem?)
+                            }
+                            
+                        }
+                    }
+                    //                    if userData.selection==3{
+                    //                        
+                    //                        //                        Toggle("Foundation Subject?", isOn: $newSubject.isFoundation)
+                    //                        
+                    //                        
+                    //                        //                        Toggle("Higher Mother Tongue?", isOn: $newSubject.isHMT)
+                    //                        
+                    //                    }
+                    //                    if userData.selection==7{
+                    //                        //                        Toggle("Mother Tongue Syllabus B?", isOn:$newSubject.isMTSB)
+                    //                        
+                    //                    }
                 }
                 .listRowBackground(userData.themelists[userData.colorSelect].secondColor)
                 Section("ASSESSMENTS") {

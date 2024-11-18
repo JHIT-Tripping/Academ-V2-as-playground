@@ -17,6 +17,7 @@ struct SubjectDetailView: View {
         formatter.numberStyle = .decimal
         return formatter
     }()
+    @Environment(SystemManager.self) var systemManager: SystemManager
     var body: some View {
         
         NavigationStack {
@@ -43,6 +44,15 @@ struct SubjectDetailView: View {
                         HStack{
                             Text("Credit")
                             TextField("Hours",value: $sub.credits, formatter: formatter)
+                        }
+                    }
+                    Toggle("Is calculated?", isOn: $sub.isCalculated)
+                    if !systemManager.systems.isEmpty{
+                        Picker("System", selection: $sub.customSystem){
+                            ForEach(systemManager.systems){system in
+                                Text(system.name).tag(system as GradeSystem?)
+                            }
+                            
                         }
                     }
                 }
@@ -126,5 +136,6 @@ struct SubjectDetailView_Previews: PreviewProvider {
             Assessment(name: "WA3", weightage: 15, totalMarks: 45, examDone: true, markAttained: 37, examDate: Date(), haveReminder: false, reminder: Date()),
             Assessment(name: "EYE", weightage: 60, totalMarks: 120, examDone: false, markAttained: 0, examDate: Date(), haveReminder: true, reminder: Date())
         ], targetMark: 80, credits: 0, numOfAssessments: 4)),userData: UserData())
+        .environment(SystemManager())
     }
 }
